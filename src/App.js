@@ -1,16 +1,16 @@
-import React, {useState,  useEffect } from "react"
-import './App.css';
+import React, { useState, useEffect } from "react";
+import "./App.css";
 import axios from "axios";
 import * as yup from "yup";
 import UserForm from "./userForm";
-import schema from "./schema"
+import schema from "./schema";
+import User from "./user";
 
 //User Form
 //Users.map
 
-
 //set states
-//submit function 
+//submit function
 //info change function
 //validate info
 //new user function (push)
@@ -37,8 +37,9 @@ function App() {
   const [formValues, setFormValues] = useState(initialFormValues);
   const [formErrors, setFormErrors] = useState(initialFormErrors);
   const [disabled, setDisabled] = useState(initialDisabled);
+
   const getUsers = () => {
-  axios
+    axios
       .get("https://reqres.in/api/users")
       .then((res) => {
         setUsers(res.data);
@@ -50,43 +51,44 @@ function App() {
     axios
       .post("https://reqres.in/api/users", newUser)
       .then((res) => {
-        setUsers([res.data, ...users]);
+        setUsers(res.data);
+        console.log(res.data);
         setFormValues(initialFormValues);
       })
       .catch((err) => console.error(err));
   };
 
- const validate = (name, value) => {
-   yup
-     .reach(schema, name)
-     .validate(value)
-     .then(() => setFormErrors({ ...formErrors, [name]: "" }))
-     .catch((err) => setFormErrors({ ...formErrors, [name]: err.errors[0] }));
- };
+  const validate = (name, value) => {
+    yup
+      .reach(schema, name)
+      .validate(value)
+      .then(() => setFormErrors({ ...formErrors, [name]: "" }))
+      .catch((err) => setFormErrors({ ...formErrors, [name]: err.errors[0] }));
+  };
 
- const inputChange = (name, value) => {
-   // 🔥 STEP 10- RUN VALIDATION WITH YUP
-   validate(name, value);
-   setFormValues({
-     ...formValues,
-     [name]: value, // NOT AN ARRAY
-   });
- };
- const formSubmit = () => {
-   const newUser = {
-     firstName: formValues.firstName.trim(),
-     lastName: formValues.lastName.trim(),
-     email: formValues.email.trim(),
-   };
-   postNewUser(newUser);
- };
- useEffect(() => {
-   getUsers();
- }, []);
+  const inputChange = (name, value) => {
+    // 🔥 STEP 10- RUN VALIDATION WITH YUP
+    validate(name, value);
+    setFormValues({
+      ...formValues,
+      [name]: value, // NOT AN ARRAY
+    });
+  };
+  const formSubmit = () => {
+    const newUser = {
+      firstName: formValues.firstName.trim(),
+      lastName: formValues.lastName.trim(),
+      email: formValues.email.trim(),
+    };
+    postNewUser(newUser);
+  };
+  useEffect(() => {
+    getUsers();
+  }, []);
 
- useEffect(() => {
-   schema.isValid(formValues).then((valid) => setDisabled(!valid));
- }, [formValues]);
+  useEffect(() => {
+    schema.isValid(formValues).then((valid) => setDisabled(!valid));
+  }, [formValues]);
 
   return (
     <div className="App">
@@ -100,9 +102,10 @@ function App() {
         disabled={disabled}
         errors={formErrors}
       />
+      <User key={users.id} details={users} />
     </div>
   );
 }
 
 export default App;
- //https://reqres.in/api/users
+//https://reqres.in/api/users

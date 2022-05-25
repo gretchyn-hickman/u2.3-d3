@@ -23,6 +23,12 @@ export default function UserForm(props) {
   };
 return (
   <form className="form container" onSubmit={onSubmit}>
+    <div className="errors">
+      {/* 🔥 RENDER THE VALIDATION ERRORS HERE */}
+      <div>{errors.firstName}</div>
+      <div>{errors.Name}</div>
+      <div>{errors.email}</div>
+    </div>
     <label>
       First Name&nbsp;
       <input
